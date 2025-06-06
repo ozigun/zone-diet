@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { calculateBlocks } from "../../lib/zoneCalculation";
 import { meals } from "../../lib/mealsData";
+import { Suspense } from "react";
 
 const mealLimits = {
   breakfast: 1,
@@ -12,7 +13,7 @@ const mealLimits = {
   snack: 2,
 };
 
-export default function MealListPage() {
+function InnerMealListPage() {
   const searchParams = useSearchParams();
   const [dailyBlocks, setDailyBlocks] = useState(null);
   const [selectedMeals, setSelectedMeals] = useState([]);
@@ -75,9 +76,9 @@ export default function MealListPage() {
     { protein: 0, carb: 0, fat: 0, total: 0 }
   );
 
-  const getBlockColor = (value, target) => {
-    if (value === target) return "text-green-600";
-    if (value < target) return "text-yellow-600";
+  const getBlockColor = (used, allowed) => {
+    if (used === allowed) return "text-green-600";
+    if (used < allowed) return "text-yellow-600";
     return "text-red-600";
   };
 
@@ -112,7 +113,6 @@ export default function MealListPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Side - Meals */}
         <div className="lg:col-span-2">
           <h3 className="text-2xl font-semibold mb-6 text-gray-800">
             Sample Meals Matching Your Blocks
@@ -160,9 +160,9 @@ export default function MealListPage() {
                             {meal.description}
                           </p>
                           <p className="text-sm text-gray-700">
-                            🥩 {meal.macros.proteinGrams} grams | 🍞{" "}
-                            {meal.macros.carbGrams} grams| 🥑{" "}
-                            {meal.macros.fatGrams} grams
+                            🥩 {meal.macros.proteinGrams}g | 🍞{" "}
+                            {meal.macros.carbGrams}g | 🥑 {meal.macros.fatGrams}
+                            g
                           </p>
                           <p className="text-sm font-semibold mt-1 text-indigo-600">
                             Total: {totalBlocks} blocks
@@ -177,7 +177,6 @@ export default function MealListPage() {
           })}
         </div>
 
-        {/* Right Side - Sticky Selected Meals */}
         <div className="lg:col-span-1">
           <div className="sticky top-24">
             <div className="bg-white border border-gray-200 p-4 rounded-lg shadow">
@@ -189,8 +188,8 @@ export default function MealListPage() {
                 <ul className="space-y-2 mb-4 text-sm">
                   {selectedMeals.map((meal, idx) => (
                     <li key={idx} className="text-gray-700">
-                      ✅ {meal.name} - 🥩 {meal.macros.proteinGrams} | 🍞{" "}
-                      {meal.macros.carbGrams} | 🥑 {meal.macros.fatGrams}
+                      ✅ {meal.name} - 🥩 {meal.macros.proteinGrams}g | 🍞{" "}
+                      {meal.macros.carbGrams}g | 🥑 {meal.macros.fatGrams}g
                     </li>
                   ))}
                 </ul>
@@ -199,26 +198,26 @@ export default function MealListPage() {
               <div className="bg-gray-100 p-3 rounded text-sm space-y-1">
                 <p
                   className={getBlockColor(
-                    dailyBlocks.proteinBlocks * 7,
-                    totalSelected.protein * 7
+                    totalSelected.protein,
+                    dailyBlocks.proteinBlocks
                   )}>
-                  Protein: {totalSelected.protein * 7} /
-                  {dailyBlocks.totalBlocks * 7}
+                  Protein: {totalSelected.protein * 7}g /{" "}
+                  {dailyBlocks.proteinBlocks * 7}g
                 </p>
                 <p
                   className={getBlockColor(
-                    dailyBlocks.carbBlocks * 9,
-                    totalSelected.carb * 9
+                    totalSelected.carb,
+                    dailyBlocks.carbBlocks
                   )}>
-                  Carbs: {totalSelected.carb * 9} /{" "}
-                  {dailyBlocks.totalBlocks * 9}
+                  Carbs: {totalSelected.carb * 9}g /{" "}
+                  {dailyBlocks.carbBlocks * 9}g
                 </p>
                 <p
                   className={getBlockColor(
-                    dailyBlocks.fatBlocks * 3,
-                    totalSelected.fat * 3
+                    totalSelected.fat,
+                    dailyBlocks.fatBlocks
                   )}>
-                  Fat: {totalSelected.fat * 3} / {dailyBlocks.totalBlocks * 3}
+                  Fat: {totalSelected.fat * 3}g / {dailyBlocks.fatBlocks * 3}g
                 </p>
                 <p className="font-bold mt-2">
                   <span
@@ -226,7 +225,8 @@ export default function MealListPage() {
                       totalSelected.total,
                       dailyBlocks.totalBlocks * 3
                     )}>
-                    Total: {totalSelected.fat} / {dailyBlocks.totalBlocks}
+                    Total Blocks: {totalSelected.total} /{" "}
+                    {dailyBlocks.totalBlocks * 3}
                   </span>
                 </p>
               </div>
@@ -235,5 +235,13 @@ export default function MealListPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function MealListPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <InnerMealListPage />
+    </Suspense>
   );
 }
