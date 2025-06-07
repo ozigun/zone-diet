@@ -198,35 +198,35 @@ function InnerMealListPage() {
               <div className="bg-gray-100 p-3 rounded text-sm space-y-1">
                 <p
                   className={getBlockColor(
-                    totalSelected.protein,
-                    dailyBlocks.proteinBlocks
+                    totalSelected.protein * 7,
+                    dailyBlocks.totalBlocks * 7
                   )}>
                   Protein: {totalSelected.protein * 7}g /{" "}
-                  {dailyBlocks.proteinBlocks * 7}g
+                  {dailyBlocks.totalBlocks * 7}g
                 </p>
                 <p
                   className={getBlockColor(
-                    totalSelected.carb,
-                    dailyBlocks.carbBlocks
+                    totalSelected.carb * 9,
+                    dailyBlocks.totalBlocks * 9
                   )}>
                   Carbs: {totalSelected.carb * 9}g /{" "}
-                  {dailyBlocks.carbBlocks * 9}g
+                  {dailyBlocks.totalBlocks * 9}g
                 </p>
                 <p
                   className={getBlockColor(
-                    totalSelected.fat,
-                    dailyBlocks.fatBlocks
+                    totalSelected.fat * 3,
+                    dailyBlocks.totalBlocks * 3
                   )}>
-                  Fat: {totalSelected.fat * 3}g / {dailyBlocks.fatBlocks * 3}g
+                  Fat: {totalSelected.fat * 3}g / {dailyBlocks.totalBlocks * 3}g
                 </p>
                 <p className="font-bold mt-2">
                   <span
                     className={getBlockColor(
-                      totalSelected.total,
-                      dailyBlocks.totalBlocks * 3
+                      totalSelected.total / 3,
+                      dailyBlocks.totalBlocks
                     )}>
-                    Total Blocks: {totalSelected.total} /{" "}
-                    {dailyBlocks.totalBlocks * 3}
+                    Total Blocks: {totalSelected.total / 3} /{" "}
+                    {dailyBlocks.totalBlocks}
                   </span>
                 </p>
               </div>
